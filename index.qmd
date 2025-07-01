@@ -9,7 +9,9 @@ execute:
 #| include: false
 library(tidyverse)
 library(tidycensus)
+library(leaflet)
 library(sf)
+library(viridis)  # for color palette
 
 # Get household income dataset for Massachussets
 ma_income <- get_acs(
@@ -23,5 +25,32 @@ ma_income <- get_acs(
 
 
 ```{r}
-ma_income
+ma_income <- st_transform(ma_income, crs = 4326)
+
+# Create color palette for the income values
+pal <- colorNumeric(palette = "viridis", domain = ma_income$estimate, na.color = "transparent")
+
+# Create interactive map
+leaflet(ma_income) %>%
+  addProviderTiles("CartoDB.Positron") %>%
+  addPolygons(
+    fillColor = ~pal(estimate),
+    weight = 0.5,
+    opacity = 1,
+    color = "white",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    highlightOptions = highlightOptions(
+      weight = 2,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.9,
+      bringToFront = TRUE),
+    label = ~paste0(NAME, "<br>Median Income: $", formatC(estimate, format = "d", big.mark = ",")),
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto")
+  ) %>%
+  addLegend(pal = pal, values = ~estimate, opacity = 0.7, title = "Median Income", position = "bottomright")
 ```
