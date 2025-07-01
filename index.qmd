@@ -4,18 +4,24 @@ execute:
 ---
 
 ```{r}
+#| message: false
+#| warning: false
+#| include: false
+library(tidyverse)
 library(tidycensus)
+library(sf)
+
+# Get household income dataset for Massachussets
+ma_income <- get_acs(
+  geography = "tract",
+  state = "MA",
+  variables = "B19013_001",
+  year = 2022,
+  geometry = T
+)
 ```
 
-```{r}
-# Get dataset for Massachussets
-ma_income <- get_acs(
-    geography = "tract",
-    state = "MA",
-    variables = "B19013_001",
-    year = 2022,
-    geometry = T
-)
 
+```{r}
 ma_income
 ```
