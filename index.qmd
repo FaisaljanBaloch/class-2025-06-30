@@ -1,0 +1,21 @@
+---
+execute: 
+  echo: false
+---
+
+```{r}
+library(tidycensus)
+```
+
+```{r}
+# Get dataset for Massachussets
+ma_income <- get_acs(
+    geography = "tract",
+    state = "MA",
+    variables = "B19013_001",
+    year = 2022,
+    geometry = T
+)
+
+ma_income
+```
